@@ -1,16 +1,9 @@
----
-title: "Bandit Sim"
-output: github_document
----
+Bandit Sim
+================
 
-
-```{r, include=FALSE}
-library(tidyverse)
-library(purrr)
-```
 # Explore-then-commit Algorithm
 
-```{r}
+``` r
 ## explore then commit algorithm
 etc_algorithm <- function(prob, n, m=NULL,
                           reps=1000, k=4) {
@@ -42,7 +35,7 @@ etc_algorithm <- function(prob, n, m=NULL,
 }
 ```
 
-```{r}
+``` r
 regret_val <- c()
 m_vals <- c(1, 2, 5, 10, 20, 30, 40)
 for (m in m_vals) {
@@ -58,7 +51,10 @@ ggplot(data = data.frame("m" = m_vals,
   geom_point() +
   theme_classic()
 ```
-```{r}
+
+![](bandit_sim_files/figure-gfm/unnamed-chunk-3-1.png)<!-- -->
+
+``` r
 regret_val_etc <- c()
 for (t in seq(100, 1000, 100)) {
   r <- etc_algorithm(c(0.6, 0.5, 0.3, 0.7), t, m = 2)
@@ -73,10 +69,11 @@ ggplot(data = tibble("t" = seq(100, 1000, 100),
   theme_classic()
 ```
 
+![](bandit_sim_files/figure-gfm/unnamed-chunk-4-1.png)<!-- -->
+
 ## Epsilon Greedy Algorithm
 
-
-```{r}
+``` r
 # epsilon-greedy algorithm
 epsilon_greedy_algorithm <- function(prob, n, eps,
                           reps=100, k=4) {
@@ -107,8 +104,7 @@ epsilon_greedy_algorithm <- function(prob, n, eps,
 }
 ```
 
-
-```{r}
+``` r
 regret_val_eg <- c()
 for (t in seq(100, 1000, 100)) {
   r <- epsilon_greedy_algorithm(c(0.6, 0.5, 0.3, 0.7), t, 
@@ -127,9 +123,10 @@ ggplot(data = tibble("t" = seq(100, 1000, 100),
   labs(x = 't',
        y = 'Expected Regret')
 ```
-## UCB
 
-```{r}
+![](bandit_sim_files/figure-gfm/unnamed-chunk-6-1.png)<!-- --> \## UCB
+
+``` r
 ## upper confidence bound
 ucb_algorithm <- function(prob, n, delta,
                           reps=100, k=4) {
@@ -164,7 +161,7 @@ ucb_algorithm <- function(prob, n, delta,
 }
 ```
 
-```{r}
+``` r
 regret_val_ucb <- c()
 for (t in seq(100, 1000, 100)) {
   r <- ucb_algorithm(c(0.6, 0.5, 0.3, 0.7), t, 
@@ -174,7 +171,7 @@ for (t in seq(100, 1000, 100)) {
 }
 ```
 
-```{r}
+``` r
 ggplot(data = tibble("t" = seq(100, 1000, 100),
                      "ETC" = regret_val_etc,
                          "Epsilon Greedy" = regret_val_eg,
@@ -187,3 +184,4 @@ ggplot(data = tibble("t" = seq(100, 1000, 100),
        y = 'Expected Regret')
 ```
 
+![](bandit_sim_files/figure-gfm/unnamed-chunk-9-1.png)<!-- -->
