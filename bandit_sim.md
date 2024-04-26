@@ -14,6 +14,7 @@ etc_algorithm <- function(prob, n, m=NULL,
     a <- vector("integer", n)
     mu <- matrix(nrow=n, ncol=k)
     
+    # explore
     for (t in 1:(m*k)) {
       a_t <- t%%k + 1
       a[t] <- a_t
@@ -24,6 +25,7 @@ etc_algorithm <- function(prob, n, m=NULL,
     mu_mean <- 
       apply(mu[1:(m*k),], 2, 
             mean, na.rm = TRUE)
+    # exploit
     for (t in ((m*k)+1):n) {
           a_t <- which.max(mu_mean)
           a[t] <- a_t
@@ -39,7 +41,7 @@ etc_algorithm <- function(prob, n, m=NULL,
 regret_val <- c()
 m_vals <- c(1, 2, 5, 10, 20, 30, 40)
 for (m in m_vals) {
-  r <- etc_algorithm(c(0.6, 0.5, 0.3, 0.7), 1000, m = m)
+  r <- etc_algorithm(context_prob, 1000, m = m)
   regret_val <- c(regret_val,
                   r)
 }
@@ -55,21 +57,21 @@ ggplot(data = data.frame("m" = m_vals,
 ![](bandit_sim_files/figure-gfm/unnamed-chunk-3-1.png)<!-- -->
 
 ``` r
+# for fixed n, varying n
 regret_val_etc <- c()
 for (t in seq(100, 1000, 100)) {
-  r <- etc_algorithm(c(0.6, 0.5, 0.3, 0.7), t, m = 2)
+  r <- etc_algorithm(context_prob, 
+                     t, m = 2)
   regret_val_etc <- c(regret_val_etc,
                   r)
 }
 
-ggplot(data = tibble("t" = seq(100, 1000, 100),
-                         "expected regret (ETC)" = regret_val_etc),
-       aes(t, `expected regret (ETC)`)) +
-  geom_point() +
-  theme_classic()
+# ggplot(data = tibble("t" = seq(100, 1000, 100),
+#                          "expected regret (ETC)" = regret_val_etc),
+#        aes(t, `expected regret (ETC)`)) +
+#   geom_point() +
+#   theme_classic()
 ```
-
-![](bandit_sim_files/figure-gfm/unnamed-chunk-4-1.png)<!-- -->
 
 ## Epsilon Greedy Algorithm
 
@@ -107,24 +109,14 @@ epsilon_greedy_algorithm <- function(prob, n, eps,
 ``` r
 regret_val_eg <- c()
 for (t in seq(100, 1000, 100)) {
-  r <- epsilon_greedy_algorithm(c(0.6, 0.5, 0.3, 0.7), t, 
+  r <- epsilon_greedy_algorithm(context_prob, t, 
                                 eps=0.1)
   regret_val_eg <- c(regret_val_eg,
                   r)
 }
-
-ggplot(data = tibble("t" = seq(100, 1000, 100),
-                     "expected regret (ETC)" = regret_val_etc,
-                         "expected regret (epsilon greedy)" = regret_val_eg) %>% 
-         pivot_longer(-t),
-       aes(t, value, color=name)) +
-  geom_line() +
-  theme_classic() +
-  labs(x = 't',
-       y = 'Expected Regret')
 ```
 
-![](bandit_sim_files/figure-gfm/unnamed-chunk-6-1.png)<!-- --> \## UCB
+## UCB
 
 ``` r
 ## upper confidence bound
@@ -164,8 +156,8 @@ ucb_algorithm <- function(prob, n, delta,
 ``` r
 regret_val_ucb <- c()
 for (t in seq(100, 1000, 100)) {
-  r <- ucb_algorithm(c(0.6, 0.5, 0.3, 0.7), t, 
-                                delta=1/(t^2))
+  r <- ucb_algorithm(context_prob, t, 
+                                delta=0.1)
   regret_val_ucb <- c(regret_val_ucb,
                   r)
 }
@@ -181,7 +173,8 @@ ggplot(data = tibble("t" = seq(100, 1000, 100),
   geom_line() +
   theme_classic() +
   labs(x = 't',
-       y = 'Expected Regret')
+       y = 'Expected Regret',
+       color = 'Algorithm')
 ```
 
 ![](bandit_sim_files/figure-gfm/unnamed-chunk-9-1.png)<!-- -->
